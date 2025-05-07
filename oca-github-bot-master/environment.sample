@@ -1,0 +1,86 @@
+#
+# environment variables that are commented out
+# have a default value, all others must be provided
+#
+
+# broker URI to use for the celery task queue
+#BROKER_URI=redis://queue
+
+#HTTP_HOST=0.0.0.0
+#HTTP_PORT=8080
+
+# GitHub webhook secret
+GITHUB_SECRET=
+# GitHub login the bot uses to perform GitHub activites
+GITHUB_LOGIN=
+# GitHub oauth token
+GITHUB_TOKEN=
+# Coma separated list of github organisations names (for organization wide scheduled tasks)
+#GITHUB_ORG=
+# Git name and email used for creating commits (default: user git config,
+# needs to be set to to launch the docker composition)
+GIT_NAME=
+GIT_EMAIL=
+
+ODOO_URL=
+ODOO_DB=
+ODOO_LOGIN=
+ODOO_PASSWORD=
+
+#SENTRY_DSN=
+
+# Number of approvals to have the proposal marked as "Approved"
+#APPROVALS_REQUIRED=2
+# Number of days before the proposal can be marked as "Approved"
+#MIN_PR_AGE=5
+
+# Coma separated list of task to run
+# By default all configured tasks are run.
+# Available tasks:
+#  delete_branch,tag_approved,tag_ready_to_merge,gen_addons_table,
+#  gen_addons_readme,gen_addons_icon,setuptools_odoo,mention_maintainer,
+#  merge_bot,rebase_bot,merge_bot_towncrier,tag_needs_review
+#BOT_TASKS=all
+
+# Coma separated list of task to ignore
+#BOT_TASKS_DISABLED=
+
+# Coma separated list of github status to ignore
+#GITHUB_STATUS_IGNORED=ci/runbot,codecov/project,codecov/patch,coverage/coveralls
+
+# Coma separated list of github Check suites to ignore
+#GITHUB_CHECK_SUITES_IGNORED=Codecov
+
+# Root of the PEP 503 simple index where wheels are published with rsync
+# (publishing disabled if empty).
+SIMPLE_INDEX_ROOT=/app/run/simple-index
+# Repositories where wheels are published using twine (publishing disabled if empty).
+# This must be a list of tuples with the following items
+# - PEP 503 index based url, to check if the file already exists
+# - repo url, for twine --repository-url
+# - username for twine --username option
+# - password for twine --password option
+OCABOT_TWINE_REPOSITORIES="[('https://pypi.org/simple','https://upload.pypi.org/legacy/','pypiuser','pypipassword')]"
+
+# Space separated list of extra arguments, for the calls of the
+# following command
+# * oca-gen-addons-table
+# * oca-gen-addon-readme
+# * oca-gen-addon-icon
+# Exemple : GEN_ADDON_README_EXTRA_ARGS=--no-gen-html
+#GEN_ADDONS_TABLE_EXTRA_ARGS=
+#GEN_ADDON_README_EXTRA_ARGS=
+#GEN_ADDON_ICON_EXTRA_ARGS=
+
+# Text displayed on github, as a comment,
+# if a user has entered a wrong command
+#OCABOT_USAGE=
+#OCABOT_EXTRA_DOCUMENTATION=
+
+# Markdown text to be used to call for maintainers when a PR is made to an
+# addon that has no declared maintainers.
+#ADOPT_AN_ADDON_MENTION=
+
+# List of branches the bot will check to verify if user is the maintainer
+# of module(s)
+MAINTAINER_CHECK_ODOO_RELEASES=8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0
