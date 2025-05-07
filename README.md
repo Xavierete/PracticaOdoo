@@ -55,6 +55,12 @@ El código está pensado para ser ejecutado en un entorno Python, y puede desple
 
 ---
 
+## Documentación Adicional
+
+Para más información y documentación detallada, visita [Documentación Adicional](https://enumence.craft.me/vLyCUOWH1aNxk2).
+
+---
+
 ## Licencia
 
 Este proyecto utiliza la licencia original de OCA para el código base, y las personalizaciones realizadas por Xavier Moreno Navarro se distribuyen bajo los mismos términos.
