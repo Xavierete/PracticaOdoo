@@ -22,7 +22,7 @@ _logger = logging.getLogger(__name__)
 
 @contextmanager
 def login():
-    """GitHub login as decorator so a pool can be implemented later."""
+    """Inicia sesión en GitHub como decorador para que se pueda implementar un pool más tarde."""
     yield github3.login(token=config.GITHUB_TOKEN)
 
 
@@ -33,13 +33,13 @@ def repository(org, repo):
 
 
 def gh_call(func, *args, **kwargs):
-    """Intercept GitHub call to wait when the API rate limit is reached."""
+    """Intercepta la llamada a GitHub para esperar cuando se alcanza el límite de la API."""
     try:
         return func(*args, **kwargs)
     except github3.exceptions.ForbiddenError as e:
         if not e.response.headers.get("X-RateLimit-Remaining", 1):
             raise Retry(
-                message="Retry task after rate limit reset",
+                message="Reintentar tarea después de que se restablezca el límite de tasa",
                 exc=e,
                 when=e.response.headers.get("X-RateLimit-Reset"),
             )
@@ -47,10 +47,12 @@ def gh_call(func, *args, **kwargs):
 
 
 def gh_date(d):
+    # Convierte una fecha a formato ISO.
     return d.isoformat()
 
 
 def gh_datetime(utc_dt):
+    # Convierte una fecha y hora UTC a formato ISO.
     return utc_dt.isoformat()[:19] + "+00:00"
 
 
@@ -60,9 +62,8 @@ class BranchNotFoundError(RuntimeError):
 
 @contextmanager
 def temporary_clone(org, repo, branch):
-    """context manager that clones a git branch into a tremporary directory,
-    and yields the temp dir name, with cache"""
-    # init cache directory
+    """Contexto que clona una rama de git en un directorio temporal y devuelve el nombre del directorio temporal, con caché."""
+    # Inicializa el directorio de caché
     cache_dir = appdirs.user_cache_dir("oca-mqt")
     repo_cache_dir = os.path.join(cache_dir, "github.com", org.lower(), repo.lower())
     if not os.path.isdir(repo_cache_dir):
@@ -70,7 +71,7 @@ def temporary_clone(org, repo, branch):
         check_call(["git", "init", "--bare"], cwd=repo_cache_dir)
     repo_url = f"https://github.com/{org}/{repo}"
     repo_url_with_token = f"https://{config.GITHUB_TOKEN}@github.com/{org}/{repo}"
-    # fetch all branches into cache
+    # Obtiene todas las ramas en la caché
     fetch_cmd = [
         "git",
         "fetch",
@@ -85,12 +86,12 @@ def temporary_clone(org, repo, branch):
         "error: cannot lock ref",
         sleep_time=10.0,
     )
-    # check if branch exist
+    # Verifica si la rama existe
     branches = check_output(["git", "branch"], cwd=repo_cache_dir)
     branches = [b.strip() for b in branches.split()]
     if branch not in branches:
         raise BranchNotFoundError()
-    # clone to temp dir, with --reference to cache
+    # Clona en un directorio temporal, con --reference a la caché
     tempdir = tempfile.mkdtemp()
     try:
         clone_cmd = [
@@ -121,10 +122,10 @@ def temporary_clone(org, repo, branch):
 
 def git_push_if_needed(remote, branch, cwd=None):
     """
-    Push current HEAD to remote branch.
+    Empuja el HEAD actual a la rama remota.
 
-    Return True if push succeeded, False if there was nothing to push.
-    Raises a celery Retry exception in case of non-fast-forward push.
+    Devuelve True si el push fue exitoso, False si no había nada que empujar.
+    Lanza una excepción de Celery Retry en caso de un push no fast-forward.
     """
     r = call(["git", "diff", "--quiet", "--exit-code", remote + "/" + branch], cwd=cwd)
     if r == 0:
@@ -135,7 +136,7 @@ def git_push_if_needed(remote, branch, cwd=None):
         if "non-fast-forward" in e.output:
             raise Retry(
                 exc=e,
-                message="Retrying because a non-fast-forward git push was attempted.",
+                message="Reintentando porque se intentó un push de git no fast-forward.",
             )
         else:
             _logger.error(
@@ -147,6 +148,7 @@ def git_push_if_needed(remote, branch, cwd=None):
 
 
 def github_user_can_push(gh_repo, username):
+    # Verifica si un usuario de GitHub puede hacer push en el repositorio.
     for collaborator in gh_call(gh_repo.collaborators):
         if username == collaborator.login and collaborator.permissions.get("push"):
             return True
@@ -154,15 +156,17 @@ def github_user_can_push(gh_repo, username):
 
 
 def git_get_head_sha(cwd):
-    """Get the sha of the git HEAD in current directory"""
+    """Obtiene el SHA del HEAD de git en el directorio actual."""
     return check_output(["git", "rev-parse", "HEAD"], cwd=cwd).strip()
 
 
 def git_get_current_branch(cwd):
+    # Obtiene el nombre de la rama actual de git.
     return check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=cwd).strip()
 
 
 def git_commit_if_needed(glob_pattern, msg, cwd):
+    # Realiza un commit si hay cambios en los archivos que coinciden con el patrón glob.
     files = [p.absolute() for p in Path(cwd).glob(glob_pattern)]
     if not files:
         return  # no match nothing to commit

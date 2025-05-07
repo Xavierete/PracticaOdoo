@@ -10,13 +10,14 @@ from . import config
 
 
 def hide_secrets(s: str) -> str:
+    # Oculta el token de GitHub en la cadena de texto.
     return s.replace(config.GITHUB_TOKEN, "***")
 
 
 def retry_on_exception(
     func, exception_regex: str, max_retries: int = 3, sleep_time: float = 5.0
 ):
-    """Retry a function call if it raises an exception matching a regex."""
+    """Reintenta una llamada a una función si se lanza una excepción que coincide con una expresión regular."""
     counter = 0
     while True:
         try:
@@ -31,4 +32,5 @@ def retry_on_exception(
 
 
 def cmd_to_str(cmd: Sequence[str]) -> str:
+    # Convierte una secuencia de comandos en una cadena de texto.
     return shlex.join(str(c) for c in cmd)
