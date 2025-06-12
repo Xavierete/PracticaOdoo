@@ -57,8 +57,7 @@ El código está pensado para ser ejecutado en un entorno Python, y puede desple
 
 ## Documentación Adicional
 
-- (+ Vídeo explicativo)
-- Para más información y documentación detallada, visita [Documentación Adicional](https://enumence.craft.me/vLyCUOWH1aNxk2).
+- Para más información, documentación detallada y el vídeo informativo, visita [Documentación Adicional](https://enumence.craft.me/vLyCUOWH1aNxk2).
 
 ---
 
